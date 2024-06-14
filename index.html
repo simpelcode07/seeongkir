@@ -1,0 +1,519 @@
+<!-- <?php
+require 'config.php';
+$query = "SELECT * FROM locations";
+$result = $conn->query($query);
+?> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hitung Jarak & Ongkir</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnqgDOpAh1kfBntmmVsJhRdOY0856hcug&libraries=places"></script>
+    <link rel="icon" href="https://titipid.com/wp-content/uploads/2024/03/favicon.ico" sizes="32x32" />
+    <script src="https://kit.fontawesome.com/02919a0749.js" crossorigin="anonymous"></script>
+
+</head>
+<body style="background-image: linear-gradient(
+    to bottom,
+    rgba(210,9,9,0.9051995798319328) 50%, rgba(255,13,13,0.9304096638655462) 100%), url('https://a.catand.us/packgo/wp-content/uploads/sites/19/2022/01/v04-lines-61-M6VHFE.jpg');">
+
+
+<marquee direction='left' style="color: white"> Kalau ada ongkir 5k dan Posisi Driver terlalu jauh contohnya dari Capgal mau ke soreang, atau dari perumnas mau ke soreang. kasi +2k saja insentif jarak. | Selalu perhatikan lokasi Pengirim/Penerima setelah diinput di pencarian. pastikan sudah sesuai dengan yang ditulis customer. Kalau lokasinya ada banyak cabang, pastikan kembali infonya ke customer. contohnya TNB Bintang 01 / 02, BTN Sawitto Indah 1,2,3,4 itu beda beda semua posisinya, jadi pastikan kembali lokasinya customer. </marquee>
+<div class="container mt-5">
+    <h2 style="color: white;" align="center"><b>🛵 SeeOngkir Layanan TITIP Indonesia</b></h2><br>
+    <style>
+        /* Tambahkan gaya CSS untuk efek bayangan pada tabel */
+        .custom-table {
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden; /* Mengatasi bayangan yang terpotong */
+        }
+    </style>
+    <table style="background-color: white" class="custom-table" width="100%" cellpadding="20">
+        <tr>
+            <td style="vertical-align: top; width: 50%;">
+                <button type="button" class="btn btn-success" onclick="copyRouteLink()"><i class="fas fa-link"></i> Salin Link Rute</button>
+                <div id="map" style="height: 500px; width: 100%;"></div> <br> 
+                <div>
+                    <label>Tombol Copy Text Ongkir</label><br>  
+                <button title="Copy" type="button" class="btn btn-danger" onclick="copyText2()">Hujan</button>
+                <button title="Pasar" type="button" class="btn btn-danger" onclick="copyText3()">Pasar</button>
+                <button title="Minimarket" type="button" class="btn btn-danger" onclick="copyText4()">Minimarket</button>
+                <button title="KFC" type="button" class="btn btn-danger" onclick="copyText5()">KFC</button>
+                <button title="Multiple" type="button" class="btn btn-danger" onclick="copyText6()">Multiple</button>  
+                <button title="RS" type="button" class="btn btn-danger" onclick="copyText7()">RS</button>  
+                </div>                 
+                
+            </td>
+            <td style="vertical-align: top; width: 50%;" >
+                <div class="form-group">
+                    <div id="ongkir" style="margin-top: 20px; color: red; font-weight: 700; font-size: 30pt; font-weight: 600;"></div>
+                    <div id="jarak" style="margin-top: 20px;"></div>
+                </div> 
+                <button title="Harga Tambahan" type="button" class="btn btn-success" onclick="toggleMenu1()"><i class="fa-solid fa-money-check"></i></button>
+                <button title="Insentif Jarak" type="button" class="btn btn-warning" onclick="toggleMenu2()"><i class="fa-solid fa-location-dot"></i></button>
+                <button title="Copy" type="button" class="btn btn-primary" onclick="copyText()"><i class="fa-solid fa-copy"></i></button>
+                <button title="Refresh Halaman" type="button" class="btn btn-info" onclick="refreshPage()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+                <button type="button" class="btn btn-warning" onclick="addNewLocation()">Tambah Lokasi Baru</button> 
+                <button type="button" class="btn btn-danger" onclick="calculateRoute()">Hitung Ongkir</button><br> <br>
+
+                <!-- Opsi Dropdown Lokasi Mitra - mulai -->
+
+<!--                 <?php 
+                $sql = "SELECT name, latlong FROM locations";
+                $result = $conn->query($sql); 
+                ?>
+
+                <label for="lokasiDropdown"><b>List Lokasi Cepat</b></label>
+                    <select class="form-control" id="lokasiDropdown" onchange="fillLokasiA()">
+                        <option value="" disabled selected>Pilih Lokasi</option>
+                        <?php 
+                // Memeriksa apakah ada hasil yang ditemukan
+                if ($result->num_rows > 0) {
+                    // Menampilkan data hasil query
+                    while ($row = $result->fetch_assoc()) {
+                        // Menampilkan option dengan nilai latlong dan nama lokasi
+                        echo '<option value="' . $row['latlong'] . '">' . $row['name'] . '</option>';
+                    }
+                } else {
+                    echo '<option value="" disabled>Tidak ada lokasi tersedia</option>';
+                }
+                         ?>
+                    </select>
+                </div><br><br> -->
+                <!-- akhir dropdown -->
+
+                <!-- Opsi Dropdown Lokasi Mitra - mulai -->
+                <label for="lokasiDropdown"><b>List Lokasi Cepat</b></label>
+                    <select class="form-control" id="lokasiDropdown" onchange="fillLokasiA()">
+                        <option value="" disabled selected>Pilih Lokasi</option>
+                        <option value="-4.009896579302453, 119.63403345767307">★Mitra Tentang Rasa</option>
+                        <option value="-3.9959914627367947, 119.63475010670673">★Mitra AN Rujak</option>
+                        <option value="-3.9989298372265503, 119.63518520808549">★Mitra Cemilan Si Kembar</option>
+                        <option value="-4.0129611544538, 119.62716345811631">★Mitra CemilanKorea Ahmad Yani</option>
+                        <option value="-4.036598363143507, 119.62592425381139">★Mitra CemilanKorea Matras</option>
+                        <option value="-4.03724, 119.62597">★Mitra MaoLagi</option>
+                        <option value="-4.007782203421471, 119.63253894602292">★Mitra Cemilanku.id / Aneka Mainan</option>
+                        <option value="-4.023434857789117, 119.62457943004463">Martabak SMPN 9</option>
+                        <option value="-4.006636593470549, 119.6298435000881">Martabak Lahalede</option>
+                        <option value="-4.006025571602709, 119.62660674718374">Martabak Lasinrang</option>
+
+                        <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
+
+
+                <div class="form-group">
+                    <label for="lokasiA"><b>Lokasi Pengirim/Pemesan/Resto: </b></label>
+                    <input type="text" class="form-control" id="lokasiA">
+                </div>
+                <div class="form-group">
+                    <label for="lokasiB"><b>Lokasi Penerima: </b></label>
+                    <input type="text" class="form-control" id="lokasiB">
+                </div>
+                <div id="additionalLocations">
+                    <label for="lokasiC"><b>Lokasi Ke-3/Pemesan/Resto:</b></label>
+                </div> <!-- Container for additional locations -->
+
+                <div id="menuHargaTambahan">
+                    <div class="form-group">
+                        <label for="biaya-tambahan"><b>Biaya Layanan:</b></label>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="hujan">
+                            <label class="form-check-label" for="hujan">Hujan <span class="badge badge-success">+3000</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="minimarket">
+                        <label class="form-check-label" for="minimarket">TITIP-Belanja (Minimarket, Toko Bintang, MR DIY)<span class="badge badge-success">+3000</span></label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="pasar">
+                        <label class="form-check-label" for="pasar">TITIP-Belanja Pasar (Lakessi, Senggol, Sumpang, CU, Sejahtera)<span class="badge badge-success">+5000</span></label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="kfc">
+                        <label class="form-check-label" for="kfc">TITIP-Makanan (KFC/PizzaHut)<span class="badge badge-success">+2000</span></label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="insentif_multiple">
+                        <label class="form-check-label" for="insentif_multiple">Multiple Order (Lebih dari 1 Order/lokasi)<span class="badge badge-success">+2000</span></label>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="insentif_rs">
+                        <label class="form-check-label" for="insentif_rs">Insentif Rumah Sakit<span class="badge badge-success">+2000</span></label>
+                    </div>
+                </div>
+                
+                <!-- awal insentif jarak -->
+                <div id="menuInsentifJarak">
+                    <div class="form-group">
+                        <label for="insentif_jarak"><b>Insentif Jarak: (Jarak Posisi Driver ke Lokasi Resto/Pengirim)</b></label>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="insentif1">
+                            <label class="form-check-label" for="insentif1">Insentif diatas 6km (disesuaikan)<span class="badge badge-warning">+2000</span></label>
+                        </div>
+                    
+                    </div>
+                </div>
+                <!-- akhir insentif jarak -->
+                
+            </td>
+        </tr>
+    </table>
+</div>
+<br>
+<!-- <a href="logout.php" style="
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        " class="btn btn-danger">Logout</a>  -->
+
+
+<script type="text/javascript">
+        $(document).ready(function() {
+        $('#lokasiDropdown').select2();
+    });
+
+
+    function fillLokasiA() {
+        var dropdown = document.getElementById("lokasiDropdown");
+        var selectedValue = dropdown.options[dropdown.selectedIndex].value;
+        document.getElementById("lokasiA").value = selectedValue;
+    }
+
+    function toggleMenu1() {
+    const menu = document.getElementById('menuHargaTambahan');
+    if (menu.style.display === 'none') {
+        menu.style.display = 'block';
+    } else {
+        menu.style.display = 'none';
+    }
+}
+    function toggleMenu2() {
+    const menu = document.getElementById('menuInsentifJarak');
+    if (menu.style.display === 'none') {
+        menu.style.display = 'block';
+    } else {
+        menu.style.display = 'none';
+    }
+}
+
+
+function refreshPage() {
+    location.reload();
+}
+
+    let map;
+    let directionsService;
+    let directionsRenderer;
+    let additionalMarkers = []; // Array to store additional markers
+
+    function initMap() {
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        const mapOptions = {
+            zoom: 14, 
+            center: {lat: -4.005895646128788, lng: 119.6425303509647} // koordinat Kota Parepare
+            // center: {lat: -4.012751, lng: 119.6175481} // koordinat Kota Parepare
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        directionsRenderer.setMap(map);
+
+        // Inisialisasi autocomplete
+        const lokasiAInput = document.getElementById('lokasiA');
+        const lokasiBInput = document.getElementById('lokasiB');
+        new google.maps.places.Autocomplete(lokasiAInput);
+        new google.maps.places.Autocomplete(lokasiBInput);
+    }
+
+    function addNewLocation() {
+        const additionalLocationsDiv = document.getElementById('additionalLocations');
+
+        // Create new form group for the additional location
+        const newFormGroup = document.createElement('div');
+        newFormGroup.classList.add('form-group');
+
+        // Create input field for the additional location
+        const newLocationInput = document.createElement('input');
+        newLocationInput.type = 'text';
+        newLocationInput.classList.add('form-control');
+        newLocationInput.placeholder = 'Lokasi Baru';
+        newFormGroup.appendChild(newLocationInput);
+
+        additionalLocationsDiv.appendChild(newFormGroup);
+
+        // Initialize autocomplete for the new input field
+        new google.maps.places.Autocomplete(newLocationInput);
+    }
+
+    function calculateRoute() {
+        const lokasiA = document.getElementById('lokasiA').value;
+        const lokasiB = document.getElementById('lokasiB').value;
+        const additionalLocations = document.querySelectorAll('#additionalLocations input');
+        const waypoints = [];
+
+        // Build waypoints array for additional locations
+        additionalLocations.forEach(function(location) {
+            if (location.value.trim() !== '') {
+                waypoints.push({
+                    location: location.value,
+                    stopover: true
+                });
+            }
+        });
+
+        directionsService.route({
+            origin: lokasiA,
+            destination: lokasiB,
+            waypoints: waypoints,
+            optimizeWaypoints: true,
+            // travelMode: 'TWO_WHEELER'
+            travelMode: 'DRIVING'
+        }, function(response, status) {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+                const distance = response.routes[0].legs.reduce((acc, leg) => acc + leg.distance.value, 0) / 1000; // Convert to km
+                document.getElementById('jarak').innerHTML = `Jarak: ${distance.toFixed(2)} km`;
+                calculateOngkir(distance);
+            } else {
+                window.alert('Permintaan rute gagal karena ' + status);
+            }
+        });
+    }
+
+    //fitur copy link rute
+function copyRouteLink() {
+    const lokasiA = document.getElementById('lokasiA').value;
+    const lokasiB = document.getElementById('lokasiB').value;
+    const jarak = document.getElementById('jarak').innerText.replace('Jarak: ', '');
+    const ongkir = document.getElementById('ongkir').innerText.replace('Ongkir: Rp', '');
+
+    const encodedLokasiA = encodeURIComponent(lokasiA);
+    const encodedLokasiB = encodeURIComponent(lokasiB);
+
+    // const routeURL = `https://www.google.com/maps/dir/?api=1&origin=${encodedLokasiA}&destination=${encodedLokasiB}&travelmode=driving`;
+    const lokasiCInput = document.getElementById('additionalLocations').getElementsByTagName('input');
+    const additionalLocations = [];
+    for (let i = 0; i < lokasiCInput.length; i++) {
+    if (lokasiCInput[i].value.trim() !== '') {
+        additionalLocations.push(encodeURIComponent(lokasiCInput[i].value));
+    }
+}
+
+    const encodedAdditionalLocations = additionalLocations.join('|');
+    const routeURL = `https://www.google.com/maps/dir/?api=1&origin=${encodedLokasiA}&destination=${encodedLokasiB}&waypoints=${encodedAdditionalLocations}&travelmode=driving`;
+
+    const pesan = `Link Rute Lokasi:\n${routeURL}\n\n Jarak: ${jarak}\n ${ongkir}`;
+
+    const tempInput = document.createElement('textarea');
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+
+    alert('Link rute berhasil disalin!');
+}
+
+    //Algoritma ONGKIR
+function calculateOngkir(jarak) {
+    let ongkir = 0;
+
+    // Menghitung ongkir berdasarkan jarak
+    if (jarak <= 1.0) {
+        ongkir = 5000;
+    } else if (jarak <= 2.5) {
+        ongkir = 7000;
+    } else if (jarak <= 3.5) {
+        ongkir = 7000;
+    } else if (jarak <= 4.5) {
+        ongkir = 8000;
+    } else if (jarak <= 5.5) {
+        ongkir = 10000;
+    } else if (jarak <= 6.5) {
+        ongkir = 12000;
+    } else if (jarak <= 7.5) {
+        ongkir = 13000;
+    } else if (jarak <= 8.5) {
+        ongkir = 14000;
+    } else if (jarak <= 9.5) {
+        ongkir = 15000;
+    } else if (jarak <= 10.5) {
+        ongkir = 16000;
+    } else if (jarak <= 11.5) {
+        ongkir = 17000;
+    } else if (jarak <= 12.5) {
+        ongkir = 18000;
+    } else if (jarak <= 13.5) {
+        ongkir = 19000;
+    } else if (jarak <= 14.5) {
+        ongkir = 20000;
+    } else if (jarak <= 15.5) {
+        ongkir = 21000;
+    } else if (jarak <= 16.5) {
+        ongkir = 22000;
+    } else if (jarak <= 17.5) {
+        ongkir = 23000;
+    } else if (jarak <= 18.5) {
+        ongkir = 24000;
+    } else if (jarak <= 19.5) {
+        ongkir = 25000;
+    } else if (jarak <= 20.5) {
+        ongkir = 26000;
+    } else if (jarak <= 21.5) {
+        ongkir = 27000;
+    } else if (jarak <= 22.5) {
+        ongkir = 28000;
+    } else if (jarak <= 23.5) {
+        ongkir = 29000;
+    } else if (jarak <= 24.5) {
+        ongkir = 30000;
+    } else if (jarak <= 25.5) {
+        ongkir = 31000;
+    } else if (jarak <= 26.5) {
+        ongkir = 32000;
+    } else if (jarak <= 27.5) {
+        ongkir = 33000;
+    } else if (jarak <= 28.5) {
+        ongkir = 34000;
+    } else if (jarak <= 29.5) {
+        ongkir = 35000;
+    } else {
+        ongkir = 35000 + (Math.ceil(jarak - 29.5) * 1000); // untuk setiap km tambahan di atas 29.5 km, tambah 1000 per km
+    }
+
+
+
+    // Hitung biaya tambahan
+    if (document.getElementById('hujan').checked) ongkir += 3000;
+    if (document.getElementById('minimarket').checked) ongkir += 3000;
+    if (document.getElementById('pasar').checked) ongkir += 5000;
+    if (document.getElementById('kfc').checked) ongkir += 2000;
+    if (document.getElementById('insentif_multiple').checked) ongkir += 2000;
+    if (document.getElementById('insentif_rs').checked) ongkir += 2000;
+    if (document.getElementById('insentif1').checked) ongkir += 2000;
+    // if (document.getElementById('insentif4').checked) ongkir += 6000;
+    // if (document.getElementById('insentif5').checked) ongkir += 7000;
+
+    document.getElementById('ongkir').innerHTML = `Total Ongkir: Rp${ongkir}`;
+    // document.getElementById(('hujan').checked).innerHTML = `Biaya Tambahan (Hujan): ${hujan}`;
+}
+
+// Inisialisasi peta ketika window di-load
+window.onload = initMap;
+
+
+
+//fitur copy text ongkir 1
+function copyText() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    // var pesan = "Halo kak, pesanan anda akan dikenakan tarif pengiriman (ongkir) sebesar:\n\n*"+ongkirText + "* \n \n*Balas 'Ya' jika kakak bersedia*, dan kami akan segera memproses pesanan kakak.\n =================================\n⚠️Belum termasuk biaya parkir (jika ada), biaya parkir akan diinfokan oleh Driver kami saat sampai di Toko/Resto._ \n⚠️Menggunakan sistem perhitungan ongkir berdasarkan jarak.";
+
+    var pesan = "Halo kak, Ini ya Ongkirnya:\n\n💰 *"+ongkirText + "* \n \n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+
+//fitur copy text ongkir 2
+function copyText2() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    var pesan = "Halo kak, Ini ya Ongkirnya:\n\n💰 *"+ongkirText + "* \n\nOngkir = Rp \nBiaya Layanan (Hujan) = Rp3.000\n\n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+
+//fitur copy text ongkir 3 pasar
+function copyText3() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    var pesan = "Halo kak, Ini ya Ongkirnya:\n\n💰 *"+ongkirText + "* \n\nOngkir = Rp \nBiaya Layanan (TITIP-Belanja Pasar) = Rp5.000 \n\n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+
+//fitur copy text ongkir 4 minimarket
+function copyText4() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    var pesan = "Halo kak, Ini ya Ongkirnya:\n\n💰 *"+ongkirText + "* \n\nOngkir = Rp \nBiaya Layanan (TITIP-Belanja Minimarket) = Rp3.000 \n\n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+
+//fitur copy text ongkir 5 kfc
+function copyText5() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    var pesan = "Halo kak, Ini ya Ongkirnya:\n\n💰 *"+ongkirText + "* \n\nOngkir = Rp \nBiaya Layanan (TITIP-Makanan KFC/Pizzahut) = Rp2.000 \n\n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+
+//fitur copy text ongkir 6 multiple
+function copyText6() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    var pesan = "Halo kak, Ini ya Ongkirnya\n\n💰 *"+ongkirText + "* \n\nOngkir = Rp \nBiaya Layanan (Multiple Order) = Rp2.000 \n\n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+
+//fitur copy text ongkir 6 multiple
+function copyText7() {
+    var ongkirText = document.getElementById("ongkir").innerText;
+    var pesan = "Halo kak, Ini ya Ongkirnya\n\n💰 *"+ongkirText + "* \n\nOngkir = Rp \nBiaya Layanan (Rumah Sakit) = Rp2.000 \n\n*Balas 'Ya' jika kakak bersedia*, Kemudian kami teruskan ke driver ya pesanannya kak.";
+    
+    var tempInput = document.createElement("textarea");
+    tempInput.value = pesan;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    
+    alert("Teks berhasil disalin!");
+}
+</script>
+</body>
+</html>
