@@ -1,8 +1,4 @@
-<!-- <?php
-require 'config.php';
-$query = "SELECT * FROM locations";
-$result = $conn->query($query);
-?> -->
+
 
 <!DOCTYPE html>
 <html>
@@ -12,9 +8,10 @@ $result = $conn->query($query);
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnqgDOpAh1kfBntmmVsJhRdOY0856hcug&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcj-Je0ZZQC-hXyeUSVGg40s-FqRDauGQ&libraries=places"></script>
     <link rel="icon" href="https://titipid.com/wp-content/uploads/2024/03/favicon.ico" sizes="32x32" />
     <script src="https://kit.fontawesome.com/02919a0749.js" crossorigin="anonymous"></script>
+    <script src="assets/js/ongkir.js" type="text/javascript"></script>
 
 </head>
 <body style="background-image: linear-gradient(
@@ -63,48 +60,13 @@ $result = $conn->query($query);
 
                 <!-- Opsi Dropdown Lokasi Mitra - mulai -->
 
-<!--                 <?php 
-                $sql = "SELECT name, latlong FROM locations";
-                $result = $conn->query($sql); 
-                ?>
-
+                
                 <label for="lokasiDropdown"><b>List Lokasi Cepat</b></label>
                     <select class="form-control" id="lokasiDropdown" onchange="fillLokasiA()">
                         <option value="" disabled selected>Pilih Lokasi</option>
-                        <?php 
-                // Memeriksa apakah ada hasil yang ditemukan
-                if ($result->num_rows > 0) {
-                    // Menampilkan data hasil query
-                    while ($row = $result->fetch_assoc()) {
-                        // Menampilkan option dengan nilai latlong dan nama lokasi
-                        echo '<option value="' . $row['latlong'] . '">' . $row['name'] . '</option>';
-                    }
-                } else {
-                    echo '<option value="" disabled>Tidak ada lokasi tersedia</option>';
-                }
-                         ?>
-                    </select>
-                </div><br><br> -->
+                        <option value="-4.009896579302453, 119.63403345767307">★Mitra Tentang Rasa</option><option value="-3.9959914627367947, 119.63475010670673">★Mitra AN-Rujak</option><option value="-3.9989298372265503, 119.63518520808549">★Mitra Cemilan SiKembar</option><option value="-4.0129611544538, 119.62716345811631">★Mitra CemilanKorea Ahmad Yani</option><option value="-4.036598363143507, 119.62592425381139">★Mitra CemilanKorea Matras</option><option value="-4.03724, 119.62597">★Mitra MaoLagi</option><option value="-4.007782203421471, 119.63253894602292">★Mitra Cemilanku.id / Aneka Mainan</option><option value="-4.023434857789117, 119.62457943004463">Martabak SMPN 9</option><option value="-4.006636593470549, 119.6298435000881">Martabak Lahalede</option><option value="-4.006025571602709, 119.62660674718374">Martabak Lasinrang</option><option value="-4.004792218809666, 119.62985864724784">Nasi Kuning Bang Rudhy</option><option value="-4.021594881940992, 119.62529942732677">Nasi Goreng Mas Gondrong Agussalim</option><option value="-3.9875460624661425, 119.63697050003294">SPX Express Soreang Parepare Hub</option><option value="-4.053135814235631, 119.62785399979843">SPX Express Bacukiki Barat Hub (Lumpue)</option><option value="-3.9952348643883937, 119.64957695317125">JNT Express Soreang (Bukit Indah)</option>                    </select>
+                </div><br><br>
                 <!-- akhir dropdown -->
-
-                <!-- Opsi Dropdown Lokasi Mitra - mulai -->
-                <label for="lokasiDropdown"><b>List Lokasi Cepat</b></label>
-                    <select class="form-control" id="lokasiDropdown" onchange="fillLokasiA()">
-                        <option value="" disabled selected>Pilih Lokasi</option>
-                        <option value="-4.009896579302453, 119.63403345767307">★Mitra Tentang Rasa</option>
-                        <option value="-3.9959914627367947, 119.63475010670673">★Mitra AN Rujak</option>
-                        <option value="-3.9989298372265503, 119.63518520808549">★Mitra Cemilan Si Kembar</option>
-                        <option value="-4.0129611544538, 119.62716345811631">★Mitra CemilanKorea Ahmad Yani</option>
-                        <option value="-4.036598363143507, 119.62592425381139">★Mitra CemilanKorea Matras</option>
-                        <option value="-4.03724, 119.62597">★Mitra MaoLagi</option>
-                        <option value="-4.007782203421471, 119.63253894602292">★Mitra Cemilanku.id / Aneka Mainan</option>
-                        <option value="-4.023434857789117, 119.62457943004463">Martabak SMPN 9</option>
-                        <option value="-4.006636593470549, 119.6298435000881">Martabak Lahalede</option>
-                        <option value="-4.006025571602709, 119.62660674718374">Martabak Lasinrang</option>
-
-                        <!-- Tambahkan opsi lainnya sesuai kebutuhan -->
-
-
                 <div class="form-group">
                     <label for="lokasiA"><b>Lokasi Pengirim/Pemesan/Resto: </b></label>
                     <input type="text" class="form-control" id="lokasiA">
@@ -165,13 +127,9 @@ $result = $conn->query($query);
     </table>
 </div>
 <br>
-<!-- <a href="logout.php" style="
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        " class="btn btn-danger">Logout</a>  -->
 
+</body>
+</html>
 
 <script type="text/javascript">
         $(document).ready(function() {
